@@ -5,12 +5,13 @@ import gui.CurrencyGui;
 import javafx.fxml.FXML;
 import javafx.scene.control.Button;
 import javafx.scene.control.ChoiceBox;
+import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
 
 import java.sql.SQLException;
 
 public class CurrencyController {
-    private final CurrencyGui view;
+    private CurrencyGui view;
     private final CurrencyDao DAO = new CurrencyDao();
     @FXML
     private ChoiceBox<String> choiceBox1;
@@ -24,6 +25,8 @@ public class CurrencyController {
     private Button convertButton;
     @FXML
     private Button howToUseButton;
+    @FXML
+    private Label error;
 
     public CurrencyController(CurrencyGui view) {
         this.view = view;
@@ -41,6 +44,13 @@ public class CurrencyController {
             double amount = Double.parseDouble(inputField.getText());
             double rate1 = DAO.getRateByAbbreviation(choiceBox1.getValue());
             double rate2 = DAO.getRateByAbbreviation(choiceBox2.getValue());
+            if (rate2 == 0 || rate1 == 0){
+                error.setText("Error: No data found for " + choiceBox2.getValue());
+                return;
+            } else if ( rate2 == -1 || rate1 == -1) {
+                error.setText("Error: Connection failed");
+                return;
+            }
             String result = String.format("%.3f",((amount / rate2) * rate1));
             outputField.setText(result);
         } else {
@@ -52,7 +62,7 @@ public class CurrencyController {
 
     @FXML
     public void getHowTo(){
-        assert view != null;
+        view = new CurrencyGui();
         view.getHowTo();
     }
 

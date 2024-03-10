@@ -9,8 +9,12 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 
 public class CurrencyDao {
-    public void persist(CurrencyEntity currency) throws SQLException {
+    public int persist(CurrencyEntity currency) throws SQLException {
         Connection conn = datasource.MariaDbConnection.getConnection();
+        if (conn == null) {
+            System.out.println("Connection failed");
+            return -1;
+        }
         String sql = "insert into currency (abbreviation, name, rateToUSD) values (?, ?, ?)";
         try {
             PreparedStatement ps = conn.prepareStatement(sql);
@@ -24,10 +28,15 @@ public class CurrencyDao {
             e.printStackTrace();
             System.out.println("Error in persist");
         }
+        return 1;
     }
 
     public double getRateByAbbreviation(String abbreviation) {
         Connection conn = datasource.MariaDbConnection.getConnection();
+        if (conn == null) {
+            System.out.println("Connection failed");
+            return -1;
+        }
         String sql = "select rateToUSD from currency where abbreviation = ?";
         try {
             PreparedStatement ps = conn.prepareStatement(sql);
@@ -46,6 +55,11 @@ public class CurrencyDao {
     public ArrayList<String> getRates() {
         ArrayList<String> rates = new ArrayList<>();
         Connection conn = datasource.MariaDbConnection.getConnection();
+        if (conn == null) {
+            System.out.println("Connection failed");
+            rates.add("-1");
+            return rates;
+        }
         String sql = "select abbreviation from currency";
         try {
             PreparedStatement ps = conn.prepareStatement(sql);

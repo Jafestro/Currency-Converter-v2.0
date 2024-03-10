@@ -1,5 +1,8 @@
 package datasource;
 
+import controller.CurrencyController;
+import javafx.fxml.FXMLLoader;
+
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.SQLException;
@@ -7,7 +10,6 @@ import java.sql.SQLException;
 public class MariaDbConnection {
 
     private static Connection conn = null;
-
     public static Connection getConnection() {
         if (conn==null) {
             // connect if necessary

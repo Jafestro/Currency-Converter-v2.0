@@ -20,6 +20,7 @@ public class CurrencyGui extends Application {
         FXMLLoader loader = new FXMLLoader(getClass().getResource("/converterGui.fxml"));
         VBox parent = loader.load();
         controller = loader.getController();
+
         controller.initializeData();
 
         Scene scene = new Scene(parent);
@@ -40,12 +41,12 @@ public class CurrencyGui extends Application {
             FXMLLoader loader = new FXMLLoader(getClass().getResource("/howToUse.fxml"));
             BorderPane root = loader.load();
 
-            Image image = new Image("dollar.png");
+            Image image = new Image("howToUse.png");
             ImageView imageView = new ImageView(image);
-            root.getChildren().add(imageView);
+            root.setCenter(imageView);
 
             // Set the scene and show the stage
-            Scene scene = new Scene(root);
+            Scene scene = new Scene(root, 1000, 700);
 
             stage.setScene(scene);
             stage.setTitle("How to Use");

@@ -88,5 +88,10 @@
             </VBox>
          </children>
       </HBox>
+      <Label fx:id="error" alignment="CENTER" prefHeight="19.0" prefWidth="404.0" textFill="#fc1010" wrapText="true">
+         <font>
+            <Font size="13.0" />
+         </font>
+      </Label>
    </children>
 </VBox>
