@@ -1,39 +1,25 @@
 package datasource;
 
-import controller.CurrencyController;
-import javafx.fxml.FXMLLoader;
+import jakarta.persistence.EntityManager;
+import jakarta.persistence.EntityManagerFactory;
+import jakarta.persistence.Persistence;
 
-import java.sql.Connection;
-import java.sql.DriverManager;
-import java.sql.SQLException;
 
 public class MariaDbConnection {
 
-    private static Connection conn = null;
-    public static Connection getConnection() {
-        if (conn==null) {
-            // connect if necessary
-            try {
-                conn = DriverManager.getConnection(
-                        "jdbc:mariadb://localhost:3306/currency_database?user=appuser&password=password");
-            } catch (SQLException e) {
-                System.out.println("Connection failed.");
-                e.printStackTrace();
-            }
-            return conn;
-        }
-        else {
-            return conn;
-        }
-    }
+    private static EntityManagerFactory emf = null;
+    private static EntityManager em = null;
 
-    public static void terminate() {
-        try {
-            getConnection().close();
-        } catch (SQLException e) {
-            // TODO Auto-generated catch block
-            e.printStackTrace();
+    public static EntityManager getInstance() {
+        // you need to add synchronization if you run in a multi-threaded environment
+
+        if (em==null) {
+            if (emf==null) {
+                emf = Persistence.createEntityManagerFactory("CurrencyMariaDbUnit");
+            }
+            em = emf.createEntityManager();
         }
+        return em;
     }
 }
 

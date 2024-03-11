@@ -1,6 +1,7 @@
 package dao;
 
 import entity.CurrencyEntity;
+import jakarta.persistence.EntityManager;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -10,67 +11,55 @@ import java.util.ArrayList;
 
 public class CurrencyDao {
     public int persist(CurrencyEntity currency) throws SQLException {
-        Connection conn = datasource.MariaDbConnection.getConnection();
-        if (conn == null) {
+        EntityManager em = datasource.MariaDbConnection.getInstance();
+        if (em == null) {
             System.out.println("Connection failed");
             return -1;
         }
-        String sql = "insert into currency (abbreviation, name, rateToUSD) values (?, ?, ?)";
-        try {
-            PreparedStatement ps = conn.prepareStatement(sql);
-            ps.setString(1, currency.getAbbreviation());
-            ps.setString(2, currency.getName());
-            ps.setDouble(3, currency.getRateToUSD());
-
-            ps.executeUpdate();
-
-        } catch (Exception e) {
-            e.printStackTrace();
-            System.out.println("Error in persist");
-        }
+        em.getTransaction().begin();
+        em.persist(currency);
+        em.getTransaction().commit();
         return 1;
     }
 
     public double getRateByAbbreviation(String abbreviation) {
-        Connection conn = datasource.MariaDbConnection.getConnection();
-        if (conn == null) {
+        EntityManager em = datasource.MariaDbConnection.getInstance();
+        if (em == null) {
             System.out.println("Connection failed");
             return -1;
         }
-        String sql = "select rateToUSD from currency where abbreviation = ?";
-        try {
-            PreparedStatement ps = conn.prepareStatement(sql);
-            ps.setString(1, abbreviation);
-            ResultSet rs = ps.executeQuery();
-            if (rs.next()) {
-                return rs.getDouble(1);
-            }
-        } catch (Exception e) {
-            e.printStackTrace();
-            System.out.println("Error in getRateByAbbreviation");
+        CurrencyEntity currency = em.find(CurrencyEntity.class, abbreviation);
+        if (currency != null) {
+            return currency.getRateToUSD();
         }
         return 0;
     }
 
     public ArrayList<String> getRates() {
         ArrayList<String> rates = new ArrayList<>();
-        Connection conn = datasource.MariaDbConnection.getConnection();
-        if (conn == null) {
+        EntityManager em = datasource.MariaDbConnection.getInstance();
+        if (em == null) {
             System.out.println("Connection failed");
             rates.add("-1");
             return rates;
         }
-        String sql = "select abbreviation from currency";
-        try {
-            PreparedStatement ps = conn.prepareStatement(sql);
-            ResultSet rs = ps.executeQuery();
-            while (rs.next()) {
-                rates.add(rs.getString("abbreviation"));
-            }
-        } catch (Exception e) {
-            e.printStackTrace();
-            System.out.println("Error in getRates");
-        }
+        em.createQuery("SELECT c FROM CurrencyEntity c", CurrencyEntity.class).getResultList().forEach(currency -> {
+            rates.add(currency.getAbbreviation());
+        });
         return rates;
+    }
+
+    public int checkIfAbbreviationExists(String abbreviation) throws SQLException {
+        EntityManager em = datasource.MariaDbConnection.getInstance();
+        if (em == null) {
+            System.out.println("Connection failed");
+            return -1;
+        }
+        CurrencyEntity currency = em.find(CurrencyEntity.class, abbreviation);
+        if (currency != null) {
+            System.out.println("Currency already exists");
+            return 1;
+        }
+        return 0;
     }
 }

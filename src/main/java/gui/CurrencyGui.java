@@ -7,6 +7,7 @@ import javafx.scene.Scene;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.BorderPane;
+import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
 
@@ -32,6 +33,28 @@ public class CurrencyGui extends Application {
         stage.show();
     }
 
+    public void showAddCurrencyWindow() {
+        try {
+            // Create a new stage
+            Stage stage = new Stage();
+
+            // Load the FXML file for the new window
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("/addCurrency.fxml"));
+            loader.setController(controller);
+            HBox root = loader.load();
+
+            // Set the scene and show the stage
+            Scene scene = new Scene(root);
+
+            stage.setScene(scene);
+            stage.setTitle("Add Currency");
+            stage.getIcons().add(new Image("dollar.png"));
+
+            stage.show();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
     public void getHowTo() {
         try {
             // Create a new stage

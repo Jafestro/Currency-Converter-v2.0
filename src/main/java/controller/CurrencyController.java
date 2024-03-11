@@ -1,6 +1,7 @@
 package controller;
 
 import dao.CurrencyDao;
+import entity.CurrencyEntity;
 import gui.CurrencyGui;
 import javafx.fxml.FXML;
 import javafx.scene.control.Button;
@@ -18,6 +19,12 @@ public class CurrencyController {
     @FXML
     private ChoiceBox<String> choiceBox2;
     @FXML
+    private TextField rateToUSD;
+    @FXML
+    private TextField formalName;
+    @FXML
+    private TextField abbreviation;
+    @FXML
     private TextField inputField;
     @FXML
     private TextField outputField;
@@ -26,7 +33,13 @@ public class CurrencyController {
     @FXML
     private Button howToUseButton;
     @FXML
+    private Button addCurrencyButton;
+    @FXML
+    private Button addCButton;
+    @FXML
     private Label error;
+    @FXML
+    private Label error2;
 
     public CurrencyController(CurrencyGui view) {
         this.view = view;
@@ -61,15 +74,46 @@ public class CurrencyController {
     }
 
     @FXML
+    public void addCurrency() throws SQLException {
+        if (formalName.getText().equals("") || abbreviation.getText().equals("") || rateToUSD.getText().equals("")){
+            error2.setText("Error: All fields must be filled");
+            return;
+        }
+        if (rateToUSD.getText().matches("^\\d+(\\.\\d+)?$")){
+            error2.setText("");
+            if (DAO.checkIfAbbreviationExists(abbreviation.getText()) == 1){
+                error2.setText("Error: Abbreviation already exists");
+                return;
+            }
+            DAO.persist(new CurrencyEntity(abbreviation.getText(), formalName.getText(), Double.parseDouble(rateToUSD.getText())));
+            formalName.setText("");
+            abbreviation.setText("");
+            rateToUSD.setText("");
+            initializeData();
+        } else {
+            error2.setText("Error: Rate must be a number");
+        }
+
+    }
+    @FXML
+    public void showAddCurrencyWindow(){
+       view = new CurrencyGui();
+       view.showAddCurrencyWindow();
+    }
+
+    @FXML
     public void getHowTo(){
         view = new CurrencyGui();
         view.getHowTo();
     }
 
+    @FXML
     public void initializeData(){
-        choiceBox1.getItems().addAll("USD", "EUR", "GBP", "JPY", "AUD", "CAD", "CHF", "CNY", "SEK", "NZD", "NOK");
+        choiceBox1.getItems().clear();
+        choiceBox1.getItems().addAll(DAO.getRates());
         choiceBox1.setValue("EUR");
-        choiceBox2.getItems().addAll("USD", "EUR", "GBP", "JPY", "AUD", "CAD", "CHF", "CNY", "SEK", "NZD", "NOK");
+        choiceBox2.getItems().clear();
+        choiceBox2.getItems().addAll(DAO.getRates());
         choiceBox2.setValue("USD");
     }
 

@@ -69,18 +69,23 @@
       </HBox>
       <HBox alignment="CENTER" prefHeight="100.0" prefWidth="200.0">
          <children>
-            <VBox alignment="CENTER" prefHeight="200.0" prefWidth="100.0" spacing="15.0">
+            <VBox alignment="CENTER" prefHeight="100.0" prefWidth="322.0" spacing="15.0">
                <children>
                   <Button fx:id="convertButton" mnemonicParsing="false" onAction="#convert" prefHeight="25.0" prefWidth="125.0" text="Convert">
                      <cursor>
                         <Cursor fx:constant="HAND" />
                      </cursor>
                   </Button>
-                  <Button fx:id="howToUseButton" mnemonicParsing="false" onAction="#getHowTo" prefHeight="25.0" prefWidth="190.0" text="How to Use">
-                     <cursor>
-                        <Cursor fx:constant="HAND" />
-                     </cursor>
-                  </Button>
+                  <HBox alignment="CENTER" prefHeight="34.0" prefWidth="322.0" spacing="50.0">
+                     <children>
+                        <Button fx:id="howToUseButton" mnemonicParsing="false" onAction="#getHowTo" prefHeight="25.0" prefWidth="90.0" text="How to Use">
+                           <cursor>
+                              <Cursor fx:constant="HAND" />
+                           </cursor>
+                        </Button>
+                        <Button fx:id="addCurrencyButton" mnemonicParsing="false" onAction="#showAddCurrencyWindow" prefHeight="25.0" prefWidth="90.0" text="Add Currency" />
+                     </children>
+                  </HBox>
                </children>
                <effect>
                   <DropShadow />
