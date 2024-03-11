@@ -19,6 +19,7 @@ public class CurrencyGui extends Application {
     @Override
     public void start(Stage stage) throws Exception {
         FXMLLoader loader = new FXMLLoader(getClass().getResource("/converterGui.fxml"));
+
         VBox parent = loader.load();
         controller = loader.getController();
 
@@ -33,54 +34,57 @@ public class CurrencyGui extends Application {
         stage.show();
     }
 
-    public void showAddCurrencyWindow() {
-        try {
-            // Create a new stage
-            Stage stage = new Stage();
+//    public void showAddCurrencyWindow() {
+//        try {
+//            // Create a new stage
+//            Stage stage2 = new Stage();
+//
+//            // Load the FXML file for the new window
+//            FXMLLoader loader = new FXMLLoader(getClass().getResource("/addCurrency.fxml"));
+//            loader.setController(controller);
+//            HBox root = loader.load();
+//
+//            // Set the scene and show the stage
+//            Scene scene = new Scene(root);
+//
+//            stage2.setScene(scene);
+//            stage2.setTitle("Add Currency");
+//            stage2.getIcons().add(new Image("dollar.png"));
+//
+//            stage2.showAndWait();
+//        } catch (IOException e) {
+//            e.printStackTrace();
+//        }
+//    }
+//    public void getHowTo() {
+//        try {
+//            // Create a new stage
+//            Stage stageHowTo = new Stage();
+//
+//            // Load the FXML file for the new window
+//            FXMLLoader loader = new FXMLLoader(getClass().getResource("/howToUse.fxml"));
+//            BorderPane root = loader.load();
+//
+//            Image image = new Image("howToUse.png");
+//            ImageView imageView = new ImageView(image);
+//            root.setCenter(imageView);
+//
+//            // Set the scene and show the stage
+//            Scene scene = new Scene(root, 1000, 700);
+//
+//            stageHowTo.setScene(scene);
+//            stageHowTo.setTitle("How to Use");
+//            stageHowTo.getIcons().add(new Image("dollar.png"));
+//
+//
+//
+//            stageHowTo.show();
+//        } catch (IOException e) {
+//            e.printStackTrace();
+//        }
+//    }
 
-            // Load the FXML file for the new window
-            FXMLLoader loader = new FXMLLoader(getClass().getResource("/addCurrency.fxml"));
-            loader.setController(controller);
-            HBox root = loader.load();
-
-            // Set the scene and show the stage
-            Scene scene = new Scene(root);
-
-            stage.setScene(scene);
-            stage.setTitle("Add Currency");
-            stage.getIcons().add(new Image("dollar.png"));
-
-            stage.show();
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
+    public void init() {
+        controller = new CurrencyController(this);
     }
-    public void getHowTo() {
-        try {
-            // Create a new stage
-            Stage stage = new Stage();
-
-            // Load the FXML file for the new window
-            FXMLLoader loader = new FXMLLoader(getClass().getResource("/howToUse.fxml"));
-            BorderPane root = loader.load();
-
-            Image image = new Image("howToUse.png");
-            ImageView imageView = new ImageView(image);
-            root.setCenter(imageView);
-
-            // Set the scene and show the stage
-            Scene scene = new Scene(root, 1000, 700);
-
-            stage.setScene(scene);
-            stage.setTitle("How to Use");
-            stage.getIcons().add(new Image("dollar.png"));
-
-
-
-            stage.show();
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-    }
-
 }

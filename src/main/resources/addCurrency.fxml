@@ -36,6 +36,7 @@
          <children>
             <Button fx:id="addCButton" mnemonicParsing="false" onAction="#addCurrency" text="Add" />
             <Label fx:id="error2" alignment="CENTER" prefHeight="26.0" prefWidth="199.0" textFill="RED" />
+            <Button mnemonicParsing="false" onAction="#switchToMainScene" text="Go To Menu" />
          </children>
       </VBox>
    </children>

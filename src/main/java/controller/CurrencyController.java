@@ -3,17 +3,30 @@ package controller;
 import dao.CurrencyDao;
 import entity.CurrencyEntity;
 import gui.CurrencyGui;
+import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
+import javafx.fxml.FXMLLoader;
+import javafx.scene.Node;
+import javafx.scene.Parent;
+import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.ChoiceBox;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
+import javafx.scene.image.Image;
+import javafx.scene.image.ImageView;
+import javafx.scene.layout.BorderPane;
+import javafx.stage.Stage;
 
+import java.io.IOException;
 import java.sql.SQLException;
 
 public class CurrencyController {
     private CurrencyGui view;
     private final CurrencyDao DAO = new CurrencyDao();
+    private Stage stage;
+    private Scene scene;
+    private Parent root;
     @FXML
     private ChoiceBox<String> choiceBox1;
     @FXML
@@ -44,27 +57,67 @@ public class CurrencyController {
     public CurrencyController(CurrencyGui view) {
         this.view = view;
     }
-    public CurrencyController(){
+
+    public CurrencyController() {
         this.view = null;
     }
 
+    public void switchToMainScene(ActionEvent event) throws IOException {
+        FXMLLoader loader = new FXMLLoader(getClass().getResource("/converterGui.fxml"));
+        root = loader.load();
+        stage = (Stage) ((Node) event.getSource()).getScene().getWindow();
+        scene = new Scene(root);
+        CurrencyController controller = loader.getController();
+        controller.initializeData();
+        scene.getStylesheets().add("style.css");
+        stage.setTitle("Currency Converter");
+        stage.getIcons().add(new Image("dollar.png"));
+        stage.setScene(scene);
+        stage.show();
+    }
+    public void switchToHowToScene(ActionEvent event) throws IOException {
+        FXMLLoader loader = new FXMLLoader(getClass().getResource("/howToUse.fxml"));
+        BorderPane root = loader.load();
+        stage = (Stage) ((Node) event.getSource()).getScene().getWindow();
+        scene = new Scene(root, 1000, 700);
+        scene.getStylesheets().add("style.css");
+        stage.setTitle("How to use");
+        stage.getIcons().add(new Image("dollar.png"));
+        Image image = new Image("howToUse.png");
+        ImageView imageView = new ImageView(image);
+        root.setCenter(imageView);
+        stage.setScene(scene);
+        stage.show();
+    }
+
+    public void switchToAddCurrencyScene(ActionEvent event) throws IOException {
+        FXMLLoader loader = new FXMLLoader(getClass().getResource("/addCurrency.fxml"));
+        root = loader.load();
+        stage = (Stage) ((Node) event.getSource()).getScene().getWindow();
+        scene = new Scene(root);
+        scene.getStylesheets().add("style.css");
+        stage.setTitle("Add Currency");
+        stage.getIcons().add(new Image("dollar.png"));
+        stage.setScene(scene);
+        stage.show();
+    }
     @FXML
     public void convert() throws SQLException {
-        if (inputField.getText().matches("^\\d+(\\.\\d+)?$") && !inputField.getText().equals("") ) {
+        if (inputField.getText().matches("^\\d+(\\.\\d+)?$") && !inputField.getText().equals("")) {
             System.out.println(inputField.getText());
             inputField.getStyleClass().add("valid-input");
             inputField.getStyleClass().remove("invalid-input");
             double amount = Double.parseDouble(inputField.getText());
             double rate1 = DAO.getRateByAbbreviation(choiceBox1.getValue());
             double rate2 = DAO.getRateByAbbreviation(choiceBox2.getValue());
-            if (rate2 == 0 || rate1 == 0){
+            if (rate2 == 0 || rate1 == 0) {
                 error.setText("Error: No data found for " + choiceBox2.getValue());
                 return;
-            } else if ( rate2 == -1 || rate1 == -1) {
+            } else if (rate2 == -1 || rate1 == -1) {
                 error.setText("Error: Connection failed");
                 return;
             }
-            String result = String.format("%.3f",((amount / rate2) * rate1));
+            String result = String.format("%.3f", ((amount / rate2) * rate1));
             outputField.setText(result);
         } else {
             System.out.println("Invalid input");
@@ -75,13 +128,13 @@ public class CurrencyController {
 
     @FXML
     public void addCurrency() throws SQLException {
-        if (formalName.getText().equals("") || abbreviation.getText().equals("") || rateToUSD.getText().equals("")){
+        if (formalName.getText().equals("") || abbreviation.getText().equals("") || rateToUSD.getText().equals("")) {
             error2.setText("Error: All fields must be filled");
             return;
         }
-        if (rateToUSD.getText().matches("^\\d+(\\.\\d+)?$")){
+        if (rateToUSD.getText().matches("^\\d+(\\.\\d+)?$")) {
             error2.setText("");
-            if (DAO.checkIfAbbreviationExists(abbreviation.getText()) == 1){
+            if (DAO.checkIfAbbreviationExists(abbreviation.getText()) == 1) {
                 error2.setText("Error: Abbreviation already exists");
                 return;
             }
@@ -89,26 +142,14 @@ public class CurrencyController {
             formalName.setText("");
             abbreviation.setText("");
             rateToUSD.setText("");
-            initializeData();
         } else {
             error2.setText("Error: Rate must be a number");
         }
 
     }
-    @FXML
-    public void showAddCurrencyWindow(){
-       view = new CurrencyGui();
-       view.showAddCurrencyWindow();
-    }
 
     @FXML
-    public void getHowTo(){
-        view = new CurrencyGui();
-        view.getHowTo();
-    }
-
-    @FXML
-    public void initializeData(){
+    public void initializeData() {
         choiceBox1.getItems().clear();
         choiceBox1.getItems().addAll(DAO.getRates());
         choiceBox1.setValue("EUR");
