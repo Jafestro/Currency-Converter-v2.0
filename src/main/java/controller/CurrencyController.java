@@ -1,7 +1,9 @@
 package controller;
 
 import dao.CurrencyDao;
+import dao.TransactionDao;
 import entity.CurrencyEntity;
+import entity.TransactionEntity;
 import gui.CurrencyGui;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
@@ -23,7 +25,8 @@ import java.sql.SQLException;
 
 public class CurrencyController {
     private CurrencyGui view;
-    private final CurrencyDao DAO = new CurrencyDao();
+    private final CurrencyDao cDAO = new CurrencyDao();
+    private final TransactionDao tDAO = new TransactionDao();
     private Stage stage;
     private Scene scene;
     private Parent root;
@@ -108,8 +111,8 @@ public class CurrencyController {
             inputField.getStyleClass().add("valid-input");
             inputField.getStyleClass().remove("invalid-input");
             double amount = Double.parseDouble(inputField.getText());
-            double rate1 = DAO.getRateByAbbreviation(choiceBox1.getValue());
-            double rate2 = DAO.getRateByAbbreviation(choiceBox2.getValue());
+            double rate1 = cDAO.getRateByAbbreviation(choiceBox1.getValue());
+            double rate2 = cDAO.getRateByAbbreviation(choiceBox2.getValue());
             if (rate2 == 0 || rate1 == 0) {
                 error.setText("Error: No data found for " + choiceBox2.getValue());
                 return;
@@ -117,6 +120,10 @@ public class CurrencyController {
                 error.setText("Error: Connection failed");
                 return;
             }
+            TransactionEntity transaction = new TransactionEntity
+                    (cDAO.getCurrencyByAbbreviation(choiceBox1.getValue()),
+                    cDAO.getCurrencyByAbbreviation(choiceBox2.getValue()));
+            tDAO.persist(transaction);
             String result = String.format("%.3f", ((amount / rate2) * rate1));
             outputField.setText(result);
         } else {
@@ -134,11 +141,11 @@ public class CurrencyController {
         }
         if (rateToUSD.getText().matches("^\\d+(\\.\\d+)?$")) {
             error2.setText("");
-            if (DAO.checkIfAbbreviationExists(abbreviation.getText()) == 1) {
+            if (cDAO.checkIfAbbreviationExists(abbreviation.getText()) == 1) {
                 error2.setText("Error: Abbreviation already exists");
                 return;
             }
-            DAO.persist(new CurrencyEntity(abbreviation.getText(), formalName.getText(), Double.parseDouble(rateToUSD.getText())));
+            cDAO.persist(new CurrencyEntity(abbreviation.getText(), formalName.getText(), Double.parseDouble(rateToUSD.getText())));
             formalName.setText("");
             abbreviation.setText("");
             rateToUSD.setText("");
@@ -151,14 +158,18 @@ public class CurrencyController {
     @FXML
     public void initializeData() {
         choiceBox1.getItems().clear();
-        if (DAO.getRates().get(0).equals("-1")) {
+        if (cDAO.getRates().isEmpty()) {
+            error.setText("Error: Database is empty populate it with currencies first");
+            return;
+        }
+        if (cDAO.getRates().get(0).equals("-1")) {
             error.setText("Error: Connection failed");
             return;
         }
-        choiceBox1.getItems().addAll(DAO.getRates());
+        choiceBox1.getItems().addAll(cDAO.getRates());
         choiceBox1.setValue("EUR");
         choiceBox2.getItems().clear();
-        choiceBox2.getItems().addAll(DAO.getRates());
+        choiceBox2.getItems().addAll(cDAO.getRates());
         choiceBox2.setValue("USD");
     }
 

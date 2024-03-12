@@ -3,9 +3,7 @@ package dao;
 import entity.CurrencyEntity;
 import jakarta.persistence.EntityManager;
 
-import java.sql.Connection;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
+
 import java.sql.SQLException;
 import java.util.ArrayList;
 
@@ -33,6 +31,19 @@ public class CurrencyDao {
             return currency.getRateToUSD();
         }
         return 0;
+    }
+
+    public CurrencyEntity getCurrencyByAbbreviation(String abbreviation) {
+        EntityManager em = datasource.MariaDbConnection.getInstance();
+        if (em == null) {
+            System.out.println("Connection failed");
+            return null;
+        }
+        CurrencyEntity currency = em.find(CurrencyEntity.class, abbreviation);
+        if (currency != null) {
+           return currency;
+        }
+        return null;
     }
 
     public ArrayList<String> getRates() {
