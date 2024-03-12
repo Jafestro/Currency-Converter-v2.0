@@ -12,7 +12,7 @@ public class MariaDbConnection {
 
     public static EntityManager getInstance() {
         // you need to add synchronization if you run in a multi-threaded environment
-
+    try {
         if (em==null) {
             if (emf==null) {
                 emf = Persistence.createEntityManagerFactory("CurrencyMariaDbUnit");
@@ -20,6 +20,11 @@ public class MariaDbConnection {
             em = emf.createEntityManager();
         }
         return em;
+    }
+    catch (Exception e) {
+        System.out.println("Connection failed");
+        return null;
+    }
     }
 }
 

@@ -151,6 +151,10 @@ public class CurrencyController {
     @FXML
     public void initializeData() {
         choiceBox1.getItems().clear();
+        if (DAO.getRates().get(0).equals("-1")) {
+            error.setText("Error: Connection failed");
+            return;
+        }
         choiceBox1.getItems().addAll(DAO.getRates());
         choiceBox1.setValue("EUR");
         choiceBox2.getItems().clear();
